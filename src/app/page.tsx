@@ -5,6 +5,7 @@ import { useState } from "react";
 export default function Home() {
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +21,12 @@ export default function Home() {
       });
 
       const data = await response.json();
-      console.log(data);
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to generate image');
+      }
+
+
       setInputText("");
     } catch (error) {
       console.error("Error:", error);
