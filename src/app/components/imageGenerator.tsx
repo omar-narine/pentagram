@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 
-export default function Home() {
+interface ImageGenerateProps {
+    generateImage: (
+        text: string
+    ) => Promise<{ success: boolean; imageUrl?: string; error?: string }>
+}
+
+export default function ImageGenerator({ generateImage } : ImageGenerateProps) {
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -12,15 +18,7 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/generate-image", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text: inputText }),
-      });
-
-      const data = await response.json();
+      const data = await generateImage(inputText)
 
       if (!data.success) {
         throw new Error(data.error || 'Failed to generate image');
@@ -28,6 +26,7 @@ export default function Home() {
 
       if (data.imageUrl) {
         const img = new Image()
+        const url = data.imageUrl
         img.onload= () => {
           setImageUrl(data.imageUrl)
         }
