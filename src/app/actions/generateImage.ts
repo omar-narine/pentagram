@@ -9,8 +9,6 @@ export async function generateImage(text: string) {
                 'X-API-SECRET': process.env.API_SECRET || '',
             },
             body: JSON.stringify({ text })
-
-
         })
 
         if (!response.ok) {

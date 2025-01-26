@@ -12,25 +12,30 @@ export default function ImageGenerator({ generateImage } : ImageGenerateProps) {
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setImageUrl(null)
+    setError(null)
 
     try {
-      const data = await generateImage(inputText)
+      const result = await generateImage(inputText)
 
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to generate image');
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to generate image');
       }
 
-      if (data.imageUrl) {
+      if (result.imageUrl) {
         const img = new Image()
-        const url = data.imageUrl
+        const url = result.imageUrl
         img.onload= () => {
-          setImageUrl(data.imageUrl)
+          setImageUrl(url)
         }
-        img.src = data.imageUrl
+        img.src = url
+      } else {
+        throw new Error('No image url received')
       }
 
 
